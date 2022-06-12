@@ -20,8 +20,8 @@ const onError = (err) => {
 }
 
 const connect =()=>{
-    let Sock = new SockJS('http://localhost:8080/ws');
-    stompClient = over(Sock);
+    let sock = new SockJS('http://localhost:8080/ws');
+    stompClient = over(sock);
     stompClient.connect({}, onConnected, onError);
 }
 
@@ -29,14 +29,14 @@ const onConnected = () => {
     userData.value.connected=true;
     console.log("🚀 ~ file: ChatRoom.vue ~ line 30 ~ onConnected ~ userData", userData.value)
     stompClient.subscribe('/chatroom/public', onMessageReceived);
-    stompClient.subscribe('/user/'+userData.username+'/private', onPrivateMessage);
+    stompClient.subscribe('/user/'+userData.value.username+'/private', onPrivateMessage);
     userJoin();
 }
 
 
 const userJoin=()=>{
     var chatMessage = {
-        senderName: userData.username,
+        senderName: userData.value.username,  
         status:"JOIN"
     };
     stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
@@ -80,8 +80,8 @@ const handleMessage =(event)=>{
 const sendValue=()=>{
     if (stompClient) {
         var chatMessage = {
-            senderName: userData.username,
-            message: userData.message,
+            senderName: userData.value.username,
+            message: userData.value.message,
             status:"MESSAGE"
         };
         console.log(chatMessage);
@@ -93,12 +93,12 @@ const sendValue=()=>{
 const sendPrivateValue=()=>{
     if (stompClient) {
         var chatMessage = {
-            senderName: userData.username,
+            senderName: userData.value.username,
             receiverName:tab,
-            message: userData.message,
+            message: userData.value.message,
             status:"MESSAGE"
         };
-        if(userData.username !== tab){
+        if(userData.value.username !== tab){
             privateChats.value.get(tab).push(chatMessage);
             // privateChats.value = new Map(privateChats);
         }
@@ -123,19 +123,31 @@ const registerUser=()=>{
 
 <h1>{{userData.username}} 在这里开启聊天~</h1>
 
-    <div class="register" v-if="userData.connected==false">
-        <input
-            id="user-name"
-            placeholder="Enter your name"
-            name="userName"
-            v-model="userData.username"
-            @click="handleUsername"
-            margin="normal"
-            />
-            <button type="button" @click="registerUser">
-                进入聊天APP
-            </button> 
+<div class="register" v-if="userData.connected==false">
+    <input
+        id="user-name"
+        placeholder="输入用户名"
+        name="userName"
+        v-model="userData.username"
+        @click="handleUsername"
+        margin="normal"
+        />
+        <button type="button" @click="registerUser">
+            进入聊天APP
+        </button> 
+</div>
+
+<div class="chat-box" v-if="userData.connected==true">
+
+    <div class="member-list">
+        <ul>
+            <li @click="tab='CHATROOM'" class="member">Chatroom</li>
+            <!-- <li @click="tab.value='CHATROOM'" class="member">Chatroom</li> -->
+            <li v-for="(name, index) in privateChats" @click="tab=name" class="member" :key="index">{{name}}</li>
+        </ul>
     </div>
+
+</div>
 
 </template>
 
