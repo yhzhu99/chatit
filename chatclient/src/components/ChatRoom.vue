@@ -143,7 +143,7 @@ const registerUser=()=>{
         <ul>
             <li @click="tab='CHATROOM'" class="member">Chatroom</li>
             <!-- <li @click="tab.value='CHATROOM'" class="member">Chatroom</li> -->
-            <li v-for="(name, index) in privateChats" @click="tab=name" class="member" :key="index">{{name}}</li>
+            <li v-for="(name, index) in privateChats.keys()" @click="tab=name" class="member" :key="index">{{name}}</li>
         </ul>
     </div>
 
