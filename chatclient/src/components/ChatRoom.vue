@@ -70,11 +70,6 @@ const onPrivateMessage = (payload)=>{
     }
 }
 
-const handleMessage =(event)=>{
-    const {value}=event.target;
-    userData.value.message = value;
-}
-
 const sendValue=()=>{
     if (stompClient) {
         var chatMessage = {
@@ -87,8 +82,6 @@ const sendValue=()=>{
         userData.value.message = "";
     }
 }
-
-console.log(tab.value)
 
 const sendPrivateValue=()=>{
     if (stompClient) {
@@ -104,11 +97,6 @@ const sendPrivateValue=()=>{
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
         userData.value.message = "";
     }
-}
-
-const handleUsername=(event)=>{
-    const {value}=event.target;
-    userData.value.username = value;
 }
 
 const changeTab=(v)=>{
@@ -133,7 +121,6 @@ const registerUser=()=>{
         placeholder="输入用户名"
         name="userName"
         v-model="userData.username"
-        @click="handleUsername()"
         margin="normal"
         />
         <button type="button" @click="registerUser()">
@@ -159,23 +146,10 @@ const registerUser=()=>{
                 </li>
         </ul>
         <div class="send-message">
-            <input type="text" class="input-message" placeholder="输入消息" v-model="userData.message" v-on:change="handleMessage" /> 
+            <input type="text" class="input-message" placeholder="输入消息" v-model="userData.message"/> 
             <button type="button" class="send-button" @click="sendValue()">发送</button>
         </div>
     </div>
-
-    <!-- <div class="chat-content">
-        <ul class="chat-messages">
-                <li v-for="(chat, index) in privateChats.get(tab)" class="message" :key="index">
-                    <div className="avatar">{{chat.senderName}}</div>
-                    <div className="message-data">{{chat.message}}</div>
-                </li>
-        </ul>
-        <div class="send-message">
-            <input type="text" class="input-message" placeholder="输入消息" v-model="userData.message" v-on:change="handleMessage" /> 
-            <button type="button" class="send-button" @click="sendPrivateValue">发送</button>
-        </div>
-    </div> -->
 
 </div>
 
