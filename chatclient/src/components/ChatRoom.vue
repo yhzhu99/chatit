@@ -27,7 +27,7 @@ const connect =()=>{
 
 const onConnected = () => {
     userData.value.connected=true;
-    console.log(userData.value)
+    console.log("🚀 ~ file: ChatRoom.vue ~ line 30 ~ onConnected ~ userData", userData.value)
     stompClient.subscribe('/chatroom/public', onMessageReceived);
     stompClient.subscribe('/user/'+userData.username+'/private', onPrivateMessage);
     userJoin();
@@ -46,9 +46,9 @@ const onMessageReceived = (payload)=>{
     var payloadData = JSON.parse(payload.body);
     switch(payloadData.status){
         case "JOIN":
-            if(!privateChats.get(payloadData.senderName)){
-                privateChats.set(payloadData.senderName,[]);
-                privateChats.value = new Map(privateChats)
+            if(!privateChats.value.get(payloadData.senderName)){
+                privateChats.value.set(payloadData.senderName,[]);
+                // privateChats.value = new Map(privateChats)
             }
             break;
         case "MESSAGE":
@@ -61,14 +61,14 @@ const onMessageReceived = (payload)=>{
 const onPrivateMessage = (payload)=>{
     console.log(payload);
     var payloadData = JSON.parse(payload.body);
-    if(privateChats.get(payloadData.senderName)){
-        privateChats.get(payloadData.senderName).push(payloadData);
-        privateChats.value = new Map(privateChats);
+    if(privateChats.value.get(payloadData.senderName)){
+        privateChats.value.get(payloadData.senderName).push(payloadData);
+        // privateChats.value = new Map(privateChats);
     }else{
         let list =[];
         list.push(payloadData);
-        privateChats.set(payloadData.senderName,list);
-        privateChats.value = new Map(privateChats)
+        privateChats.value.set(payloadData.senderName,list);
+        // privateChats.value = new Map(privateChats)
     }
 }
 
@@ -99,8 +99,8 @@ const sendPrivateValue=()=>{
             status:"MESSAGE"
         };
         if(userData.username !== tab){
-            privateChats.get(tab).push(chatMessage);
-            privateChats.value = new Map(privateChats);
+            privateChats.value.get(tab).push(chatMessage);
+            // privateChats.value = new Map(privateChats);
         }
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
         userData.value.message = "";
