@@ -87,12 +87,12 @@ const sendPrivateValue=()=>{
     if (stompClient) {
         var chatMessage = {
             senderName: userData.value.username,
-            receiverName:tab,
+            receiverName:tab.value,
             message: userData.value.message,
             status:"MESSAGE"
         };
-        if(userData.value.username !== tab){
-            privateChats.set(tab, [...privateChats.get(tab), chatMessage]);
+        if(userData.value.username !== tab.value){
+            privateChats.set(tab.value, [...privateChats.get(tab.value), chatMessage]);
         }
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
         userData.value.message = "";
@@ -139,15 +139,22 @@ const registerUser=()=>{
     </div>
 
     <div class="chat-content">
-        <ul class="chat-messages">
+        <ul class="chat-messages" v-if="tab==='CHATROOM'">
                 <li v-for="(chat, index) in publicChats" class="message" :key="index">
+                    <div class="avatar">{{chat.senderName}}</div>
+                    <div class="message-data">{{chat.message}}</div>
+                </li>
+        </ul>
+        <ul class="chat-messages" v-else>
+                <li v-for="(chat, index) in privateChats.get(tab)" class="message" :key="index">
                     <div class="avatar">{{chat.senderName}}</div>
                     <div class="message-data">{{chat.message}}</div>
                 </li>
         </ul>
         <div class="send-message">
             <input type="text" class="input-message" placeholder="输入消息" v-model="userData.message"/> 
-            <button type="button" class="send-button" @click="sendValue()">发送</button>
+            <button type="button" class="send-button" @click="sendValue()" v-if="tab==='CHATROOM'">发送</button>
+            <button type="button" class="send-button" @click="sendPrivateValue()" v-else>发送</button>
         </div>
     </div>
 
