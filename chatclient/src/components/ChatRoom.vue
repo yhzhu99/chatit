@@ -1,10 +1,10 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { over } from 'stompjs';
 import  SockJS  from "sockjs-client/dist/sockjs"
 
 let stompClient = null;
-let privateChats = ref(new Map())
+let privateChats = reactive(new Map())
 let publicChats = ref([])
 let tab = ref("CHATROOM")
 let userData = ref({
@@ -46,28 +46,27 @@ const onMessageReceived = (payload)=>{
     var payloadData = JSON.parse(payload.body);
     switch(payloadData.status){
         case "JOIN":
-            if(!privateChats.value.get(payloadData.senderName)){
-                privateChats.value.set(payloadData.senderName,[]);
-                // privateChats.value = new Map(privateChats)
+            if(!privateChats.get(payloadData.senderName)){
+                privateChats.set(payloadData.senderName,[]);
             }
             break;
         case "MESSAGE":
+            console.log(publicChats.value)
             publicChats.value.push(payloadData);
             break;
     }
+       
 }
 
 const onPrivateMessage = (payload)=>{
-    console.log(payload);
+    // console.log(payload);
     var payloadData = JSON.parse(payload.body);
-    if(privateChats.value.get(payloadData.senderName)){
-        privateChats.value.get(payloadData.senderName).push(payloadData);
-        // privateChats.value = new Map(privateChats);
+    if(privateChats.get(payloadData.senderName)){
+        privateChats.set(payloadData.senderName, [...privateChats.get(payloadData.senderName), payloadData]);
     }else{
         let list =[];
         list.push(payloadData);
-        privateChats.value.set(payloadData.senderName,list);
-        // privateChats.value = new Map(privateChats)
+        privateChats.set(payloadData.senderName, list);
     }
 }
 
@@ -89,6 +88,8 @@ const sendValue=()=>{
     }
 }
 
+console.log(tab.value)
+
 const sendPrivateValue=()=>{
     if (stompClient) {
         var chatMessage = {
@@ -98,8 +99,7 @@ const sendPrivateValue=()=>{
             status:"MESSAGE"
         };
         if(userData.value.username !== tab){
-            privateChats.value.get(tab).push(chatMessage);
-            // privateChats.value = new Map(privateChats);
+            privateChats.set(tab, [...privateChats.get(tab), chatMessage]);
         }
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
         userData.value.message = "";
@@ -109,6 +109,11 @@ const sendPrivateValue=()=>{
 const handleUsername=(event)=>{
     const {value}=event.target;
     userData.value.username = value;
+}
+
+const changeTab=(v)=>{
+    tab.value=v;
+    console.log(tab.value)
 }
 
 const registerUser=()=>{
@@ -128,10 +133,10 @@ const registerUser=()=>{
         placeholder="输入用户名"
         name="userName"
         v-model="userData.username"
-        @click="handleUsername"
+        @click="handleUsername()"
         margin="normal"
         />
-        <button type="button" @click="registerUser">
+        <button type="button" @click="registerUser()">
             进入聊天APP
         </button> 
 </div>
@@ -140,24 +145,37 @@ const registerUser=()=>{
 
     <div class="member-list">
         <ul>
-            <li @click="tab='CHATROOM'" class="member">Chatroom</li>
+            <li @click="changeTab('CHATROOM')" class="member">Chatroom</li>
             <!-- <li @click="tab.value='CHATROOM'" class="member">Chatroom</li> -->
-            <li v-for="(name, index) in privateChats.keys()" @click="tab=name" class="member" :key="index">{{name}}</li>
+            <li v-for="(name, index) in privateChats.keys()" @click="changeTab(name)" class="member" :key="index">{{name}}</li>
         </ul>
     </div>
 
     <div class="chat-content">
         <ul class="chat-messages">
                 <li v-for="(chat, index) in publicChats" class="message" :key="index">
+                    <div class="avatar">{{chat.senderName}}</div>
+                    <div class="message-data">{{chat.message}}</div>
+                </li>
+        </ul>
+        <div class="send-message">
+            <input type="text" class="input-message" placeholder="输入消息" v-model="userData.message" v-on:change="handleMessage" /> 
+            <button type="button" class="send-button" @click="sendValue()">发送</button>
+        </div>
+    </div>
+
+    <!-- <div class="chat-content">
+        <ul class="chat-messages">
+                <li v-for="(chat, index) in privateChats.get(tab)" class="message" :key="index">
                     <div className="avatar">{{chat.senderName}}</div>
                     <div className="message-data">{{chat.message}}</div>
                 </li>
         </ul>
         <div class="send-message">
             <input type="text" class="input-message" placeholder="输入消息" v-model="userData.message" v-on:change="handleMessage" /> 
-            <button type="button" class="send-button" @click="sendValue">发送</button>
+            <button type="button" class="send-button" @click="sendPrivateValue">发送</button>
         </div>
-    </div>
+    </div> -->
 
 </div>
 
