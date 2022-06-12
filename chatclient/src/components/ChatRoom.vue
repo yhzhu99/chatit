@@ -52,8 +52,7 @@ const onMessageReceived = (payload)=>{
             }
             break;
         case "MESSAGE":
-            publicChats.push(payloadData);
-            publicChats.value = publicChats
+            publicChats.value.push(payloadData);
             break;
     }
 }
@@ -145,6 +144,19 @@ const registerUser=()=>{
             <!-- <li @click="tab.value='CHATROOM'" class="member">Chatroom</li> -->
             <li v-for="(name, index) in privateChats.keys()" @click="tab=name" class="member" :key="index">{{name}}</li>
         </ul>
+    </div>
+
+    <div class="chat-content">
+        <ul class="chat-messages">
+                <li v-for="(chat, index) in publicChats" class="message" :key="index">
+                    <div className="avatar">{{chat.senderName}}</div>
+                    <div className="message-data">{{chat.message}}</div>
+                </li>
+        </ul>
+        <div class="send-message">
+            <input type="text" class="input-message" placeholder="输入消息" v-model="userData.message" v-on:change="handleMessage" /> 
+            <button type="button" class="send-button" @click="sendValue">发送</button>
+        </div>
     </div>
 
 </div>
