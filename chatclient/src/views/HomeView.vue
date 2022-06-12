@@ -1,9 +1,9 @@
 <script setup>
-import TheWelcome from '@/components/TheWelcome.vue'
+import ChatRoom from '@/components/ChatRoom.vue'
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <ChatRoom />
   </main>
 </template>
