@@ -189,19 +189,97 @@ const sendPublicMessage=()=>{
 }
 
 const sendPrivateMessage=()=>{
+    const f = document.getElementById("fileInput").files[0];
     if (stompClient) {
-        var chatMessage = {
-            senderName: userData.value.username,
-            receiverName:tab.value,
-            message: userData.value.message,
-            messageType: "text",
-            status:"MESSAGE"
-        };
-        if(userData.value.username !== tab.value){
-            privateChats.set(tab.value, [...privateChats.get(tab.value), chatMessage]);
+        if (userData.value.message){
+            var chatMessage = {
+                senderName: userData.value.username,
+                receiverName: tab.value,
+                message: userData.value.message,
+                messageType: "text",
+                status:"MESSAGE"
+            };
+            if(userData.value.username !== tab.value){
+                privateChats.set(tab.value, [...privateChats.get(tab.value), chatMessage]);
+            }
+            stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+            userData.value.message = "";
         }
-        stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
-        userData.value.message = "";
+        if (!f){
+            console.log("🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀")
+        } else if (f.type=="image/png") {
+            const reader = new FileReader();
+            reader.onload = function(evt) { 
+                const contents = evt.target.result;
+                var chatMessage = {
+                    senderName: userData.value.username,
+                    receiverName: tab.value,
+                    message: contents,
+                    messageType: "image",
+                    messageName: f.name,
+                    status:"MESSAGE"
+                };
+                if(userData.value.username !== tab.value){
+                    privateChats.set(tab.value, [...privateChats.get(tab.value), chatMessage]);
+                }
+                stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+            };
+            reader.readAsDataURL(f);
+        } else if (f.type=="video/mp4") {
+            const reader = new FileReader();
+            reader.onload = function(evt) { 
+                const contents = evt.target.result;
+                var chatMessage = {
+                    senderName: userData.value.username,
+                    receiverName: tab.value,
+                    message: contents,
+                    messageType: "video",
+                    messageName: f.name,
+                    status:"MESSAGE"
+                };
+                if(userData.value.username !== tab.value){
+                    privateChats.set(tab.value, [...privateChats.get(tab.value), chatMessage]);
+                }
+                stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+            };
+            reader.readAsDataURL(f);
+        } else if (f.type=="audio/mpeg") {
+            const reader = new FileReader();
+            reader.onload = function(evt) { 
+                const contents = evt.target.result;
+                var chatMessage = {
+                    senderName: userData.value.username,
+                    receiverName: tab.value,
+                    message: contents,
+                    messageType: "audio",
+                    messageName: f.name,
+                    status:"MESSAGE"
+                };
+                if(userData.value.username !== tab.value){
+                    privateChats.set(tab.value, [...privateChats.get(tab.value), chatMessage]);
+                }
+                stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+            };
+            reader.readAsDataURL(f);
+        } else {
+            const reader = new FileReader();
+            reader.onload = function(evt) { 
+                const contents = evt.target.result;
+                var chatMessage = {
+                    senderName: userData.value.username,
+                    receiverName: tab.value,
+                    message: contents,
+                    messageType: "file",
+                    messageName: f.name,
+                    status:"MESSAGE"
+                };
+                if(userData.value.username !== tab.value){
+                    privateChats.set(tab.value, [...privateChats.get(tab.value), chatMessage]);
+                }
+                stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+            };
+            reader.readAsDataURL(f);
+        }
     }
 }
 
@@ -302,7 +380,32 @@ const leaveChat=()=>{
         <ul class="chat-messages" v-else>
                 <li v-for="(chat, index) in privateChats.get(tab)" class="message" :key="index">
                     <div class="avatar">{{chat.senderName}}</div>
-                    <div class="message-data">{{chat.message}}</div>
+                    <div class="message-data" v-if="chat.messageType=='text'">{{chat.message}}</div>
+                    <div class="message-data" v-if="chat.messageType=='image'">
+                        <div class="demo-image__preview">
+                            <el-image
+                            style="width: 50px; height: 50px"
+                            :initial-index="0"
+                            :src="chat.message"
+                            :preview-src-list="[chat.message]"
+                            :alt="chat.messageName"
+                            fit="cover"
+                            />
+                        </div>
+                    </div>
+                    <div class="message-data" v-if="chat.messageType=='file'">
+                        <el-button size="large" round @click="downloadFile(chat.message, chat.messageName)">下载 {{chat.messageName}}</el-button>
+                    </div>
+                    <div class="message-data" v-if="chat.messageType=='video'">
+                        <video alt="chat.messageName" width="150" height="150" controls>
+                            <source :src="chat.message" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="message-data" v-if="chat.messageType=='audio'">
+                        <audio alt="chat.messageName" controls>
+                            <source :src="chat.message" type="audio/mpeg" />
+                        </audio>
+                    </div>
                 </li>
         </ul>
         <div class="send-message">
