@@ -44,7 +44,17 @@ const userJoin=()=>{
         status:"JOIN"
     };
 
+    // 刚进入的时候，默认所有人都是离线状态，直到有人JOIN/MESSAGE
     for (const [key, value] of friendsList.value.entries()) {
+        if ( friendsList.value.get(key) == '[在线]' ) {
+            continue
+
+        }
+        else if (friendsList.value.get(key) == '[未知]' && key == userData.value.username) {
+            friendsList.value.set(key, "[在线]")
+        } else{ 
+            friendsList.value.set(key, "[未知]")
+        }
         // console.log(key, value);
         if(!privateChats.get(key)){
             privateChats.set(key,[]);
@@ -58,10 +68,12 @@ const onPublicMessageReceived = (payload)=>{
     var payloadData = JSON.parse(payload.body);
     switch(payloadData.status){
         case "JOIN":
-            friendsList.value.set(payloadData.senderName, 1);
+            friendsList.value.set(payloadData.senderName, "JOIN");
             if(!privateChats.get(payloadData.senderName)){
                 privateChats.set(payloadData.senderName,[]);
             }
+            // 当别人上线时，更新他的在线状态
+            friendsList.value.set(payloadData.senderName, "[在线]")
             break;
         case "MESSAGE":
             console.log(publicChats.value)
@@ -147,7 +159,7 @@ const registerUser=()=>{
         <ul>
             <li @click="changeTab('CHATROOM')" class="member">Chatroom</li>
             <!-- <li @click="tab.value='CHATROOM'" class="member">Chatroom</li> -->
-            <li v-for="(name, index) in friendsList.keys()" @click="changeTab(name)" class="member" :key="index">{{name}}</li>
+            <li v-for="(name, index) in friendsList.keys()" @click="changeTab(name)" class="member" :key="index">{{name}} {{friendsList.get(name)}}</li>
         </ul>
     </div>
 
