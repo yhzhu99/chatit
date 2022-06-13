@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, unref, reactive, onMounted, onUnmounted } from 'vue'
 import { useStorage } from '@vueuse/core'
 import { over } from 'stompjs';
 import  SockJS  from "sockjs-client/dist/sockjs"
@@ -9,7 +9,7 @@ let privateChats = reactive(new Map())
 // const privateChats = useStorage('privateChats', new Map())
 // let publicChats = ref([])
 const publicChats = useStorage('publicChats', [])
-// const friendsList = useStorage('friendsList', new Map())
+const friendsList = useStorage('friendsList', new Map())
 
 let tab = ref("CHATROOM")
 let userData = ref({
@@ -43,6 +43,14 @@ const userJoin=()=>{
         senderName: userData.value.username,  
         status:"JOIN"
     };
+
+    for (const [key, value] of friendsList.value.entries()) {
+        // console.log(key, value);
+        if(!privateChats.get(key)){
+            privateChats.set(key,[]);
+        }
+    }
+
     stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
 }
 
@@ -50,6 +58,7 @@ const onPublicMessageReceived = (payload)=>{
     var payloadData = JSON.parse(payload.body);
     switch(payloadData.status){
         case "JOIN":
+            friendsList.value.set(payloadData.senderName, 1);
             if(!privateChats.get(payloadData.senderName)){
                 privateChats.set(payloadData.senderName,[]);
             }
@@ -138,7 +147,7 @@ const registerUser=()=>{
         <ul>
             <li @click="changeTab('CHATROOM')" class="member">Chatroom</li>
             <!-- <li @click="tab.value='CHATROOM'" class="member">Chatroom</li> -->
-            <li v-for="(name, index) in privateChats.keys()" @click="changeTab(name)" class="member" :key="index">{{name}}</li>
+            <li v-for="(name, index) in friendsList.keys()" @click="changeTab(name)" class="member" :key="index">{{name}}</li>
         </ul>
     </div>
 
