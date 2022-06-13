@@ -221,7 +221,17 @@ const leaveChat=()=>{
                 <li v-for="(chat, index) in publicChats" class="message" :key="index">
                     <div class="avatar">{{chat.senderName}}</div>
                     <div class="message-data" v-if="chat.messageType=='text'">{{chat.message}}</div>
-                    <img :src="chat.message" v-if="chat.messageType=='image'" :alt="chat.messageName"/>
+                    <!-- <img :src="chat.message" v-if="chat.messageType=='image'" :alt="chat.messageName"/> -->
+                    <div class="demo-image__preview" v-if="chat.messageType=='image'">
+                        <el-image
+                        style="width: 50px; height: 50px"
+                        :initial-index="0"
+                        :src="chat.message"
+                        :preview-src-list="[chat.message]"
+                        :alt="chat.messageName"
+                        fit="cover"
+                        />
+                    </div>
                 </li>
         </ul>
         <ul class="chat-messages" v-else>
@@ -383,5 +393,16 @@ ul {
 }
 .message.self{
   justify-content: end;
+}
+
+.demo-image__error .image-slot {
+  font-size: 30px;
+}
+.demo-image__error .image-slot .el-icon {
+  font-size: 30px;
+}
+.demo-image__error .el-image {
+  width: 100%;
+  height: 200px;
 }
 </style>
