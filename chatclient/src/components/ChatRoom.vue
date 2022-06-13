@@ -339,14 +339,16 @@ const leaveChat=()=>{
     <div class="member-list">
         <ul>
             <li @click="changeTab('CHATROOM')" class="member">群聊<div v-if="'CHATROOM'==tab">🍉</div></li>
-            <!-- <li @click="tab.value='CHATROOM'" class="member">Chatroom</li> -->
-            <li v-for="(name, index) in friendsList.keys()" @click="changeTab(name)" class="member" :key="index">{{name}} {{friendsList.get(name)}} <div v-if="name==tab">🍉</div> </li>
+            <el-scrollbar height="400px">
+                <li v-for="(name, index) in friendsList.keys()" @click="changeTab(name)" class="member" :key="index">{{name}} {{friendsList.get(name)}} <div v-if="name==tab">🍉</div> </li>
+            </el-scrollbar>
         </ul>
         <button type="button" class="leave-button" @click="leaveChat()">退出</button>
     </div>
 
     <div class="chat-content">
         <ul class="chat-messages" v-if="tab==='CHATROOM'">
+                <el-scrollbar height="450px">
                 <li v-for="(chat, index) in publicChats" class="message" :key="index">
                     <div class="avatar">{{chat.senderName}}</div>
                     <div class="message-data" v-if="chat.messageType=='text'">{{chat.message}}</div>
@@ -376,8 +378,10 @@ const leaveChat=()=>{
                         </audio>
                     </div>
                 </li>
+                </el-scrollbar>
         </ul>
         <ul class="chat-messages" v-else>
+                <el-scrollbar height="450px">
                 <li v-for="(chat, index) in privateChats.get(tab)" class="message" :key="index">
                     <div class="avatar">{{chat.senderName}}</div>
                     <div class="message-data" v-if="chat.messageType=='text'">{{chat.message}}</div>
@@ -407,6 +411,7 @@ const leaveChat=()=>{
                         </audio>
                     </div>
                 </li>
+                </el-scrollbar>
         </ul>
         <div class="send-message">
             <input type="text" class="input-message" placeholder="输入消息" v-model="userData.message"/>
