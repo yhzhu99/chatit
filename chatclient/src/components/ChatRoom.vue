@@ -44,16 +44,19 @@ const userJoin=()=>{
         status:"JOIN"
     };
 
-    // 刚进入的时候，默认所有人都是离线状态，直到有人JOIN/MESSAGE
+    // 刚进入的时候，更新我的在线状态
+    friendsList.value.set(userData.value.username, "[在线]")
+
+    // 初始化privateChats的map
     for (const [key, value] of friendsList.value.entries()) {
-        if ( friendsList.value.get(key) == '[在线]' ) {
-            continue
-        }
-        else if (friendsList.value.get(key) == '[未知]' && key == userData.value.username) {
-            friendsList.value.set(key, "[在线]")
-        } else{ 
-            friendsList.value.set(key, "[未知]")
-        }
+        // if ( friendsList.value.get(key) == '[在线]' ) {
+        //     continue
+        // }
+        // else if (friendsList.value.get(key) == '[未知]' && key == userData.value.username) {
+        //     friendsList.value.set(key, "[在线]")
+        // } else{ 
+        //     friendsList.value.set(key, "[未知]")
+        // }
         // console.log(key, value);
         if(!privateChats.get(key)){
             privateChats.set(key,[]);
