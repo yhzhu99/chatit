@@ -41,6 +41,7 @@ const onConnected = () => {
 const userJoin=()=>{
     var chatMessage = {
         senderName: userData.value.username,  
+        messageType: "text",
         status:"JOIN"
     };
 
@@ -105,15 +106,43 @@ const onPrivateMessageReceived = (payload)=>{
 }
 
 const sendPublicMessage=()=>{
+    const f = document.getElementById("fileInput").files[0];
+
     if (stompClient) {
         var chatMessage = {
             senderName: userData.value.username,
             message: userData.value.message,
+            messageType: "text",
             status:"MESSAGE"
         };
         console.log(chatMessage);
         stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
         userData.value.message = "";
+
+
+        if (!f){
+            console.log("🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀")
+        } else if (f.type=="image/png") {
+            console.log("image!!!!")
+            console.log("🚀1111🚀111🚀111🚀1")
+            const reader = new FileReader();
+            reader.onload = function(evt) { 
+                // const metadata = `name: ${f.name}, type: ${f.type}, size: ${f.size}, contents:`;
+                const contents = evt.target.result;
+                // console.log(metadata, contents);f
+                // document.getElementById("image").src = contents;
+                var chatMessage = {
+                    senderName: userData.value.username,
+                    message: contents,
+                    messageType: "image",
+                    messageName: f.name,
+                    status:"MESSAGE"
+                };
+                console.log("sent!!!!!!!!!!!!!!!!!!!", chatMessage.messageType);
+                stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
+            };
+            reader.readAsDataURL(f);
+        }
     }
 }
 
@@ -123,6 +152,7 @@ const sendPrivateMessage=()=>{
             senderName: userData.value.username,
             receiverName:tab.value,
             message: userData.value.message,
+            messageType: "text",
             status:"MESSAGE"
         };
         if(userData.value.username !== tab.value){
@@ -148,6 +178,7 @@ const leaveChat=()=>{
     if (stompClient) {
         var chatMessage = {
             senderName: userData.value.username,
+            messageType: "text",
             status:"LEAVE"
         };
         stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
@@ -189,7 +220,8 @@ const leaveChat=()=>{
         <ul class="chat-messages" v-if="tab==='CHATROOM'">
                 <li v-for="(chat, index) in publicChats" class="message" :key="index">
                     <div class="avatar">{{chat.senderName}}</div>
-                    <div class="message-data">{{chat.message}}</div>
+                    <div class="message-data" v-if="chat.messageType=='text'">{{chat.message}}</div>
+                    <img :src="chat.message" v-if="chat.messageType=='image'" :alt="chat.messageName"/>
                 </li>
         </ul>
         <ul class="chat-messages" v-else>
@@ -199,12 +231,17 @@ const leaveChat=()=>{
                 </li>
         </ul>
         <div class="send-message">
-            <input type="text" class="input-message" placeholder="输入消息" v-model="userData.message"/> 
+            <input type="text" class="input-message" placeholder="输入消息" v-model="userData.message"/>
+            <input type="file" id="fileInput">
             <button type="button" class="send-button" @click="sendPublicMessage()" v-if="tab==='CHATROOM'">发送</button>
             <button type="button" class="send-button" @click="sendPrivateMessage()" v-else>发送</button>
         </div>
     </div>
 </div>
+
+<!-- <input type="file" id="fileInput">
+<button type="button" class="send-button" @click="sendPublicMessage()">发送</button>
+<img src="" height="200" id="image" alt="Image preview..."> -->
 
 </template>
 
