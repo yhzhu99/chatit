@@ -107,19 +107,18 @@ const onPrivateMessageReceived = (payload)=>{
 
 const sendPublicMessage=()=>{
     const f = document.getElementById("fileInput").files[0];
-
     if (stompClient) {
-        var chatMessage = {
-            senderName: userData.value.username,
-            message: userData.value.message,
-            messageType: "text",
-            status:"MESSAGE"
-        };
-        console.log(chatMessage);
-        stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
-        userData.value.message = "";
-
-
+        if (userData.value.message){
+            var chatMessage = {
+                senderName: userData.value.username,
+                message: userData.value.message,
+                messageType: "text",
+                status:"MESSAGE"
+            };
+            console.log(chatMessage);
+            stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
+            userData.value.message = "";
+        }
         if (!f){
             console.log("🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀")
         } else if (f.type=="image/png") {
