@@ -10,4 +10,6 @@ import lombok.*;
 public class Message {
     private String senderName, receiverName, message, date;
     private Status status;
+    private String messageType; // text / image / file / music / video
+    private String messageName;
 }
