@@ -68,7 +68,6 @@ const onPublicMessageReceived = (payload)=>{
     var payloadData = JSON.parse(payload.body);
     switch(payloadData.status){
         case "JOIN":
-            friendsList.value.set(payloadData.senderName, "JOIN");
             if(!privateChats.get(payloadData.senderName)){
                 privateChats.set(payloadData.senderName,[]);
             }
@@ -78,6 +77,10 @@ const onPublicMessageReceived = (payload)=>{
         case "MESSAGE":
             console.log(publicChats.value)
             publicChats.value.push(payloadData);
+            break;
+        case "LEAVE":
+            // 当别人下线时，更新他的离线状态
+            friendsList.value.set(payloadData.senderName, "[离线]")
             break;
     }
        
@@ -132,8 +135,21 @@ const changeTab=(v)=>{
 const registerUser=()=>{
     console.log("register")
     connect();
-    
 }
+
+const leaveChat=()=>{
+    console.log("leave")
+    if (stompClient) {
+        var chatMessage = {
+            senderName: userData.value.username,
+            status:"LEAVE"
+        };
+        stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
+        stompClient.disconnect();
+        userData.value.connected=false;
+    }
+}
+
 </script>
 
 <template>
@@ -154,13 +170,13 @@ const registerUser=()=>{
 </div>
 
 <div class="chat-box" v-if="userData.connected==true">
-
     <div class="member-list">
         <ul>
             <li @click="changeTab('CHATROOM')" class="member">Chatroom</li>
             <!-- <li @click="tab.value='CHATROOM'" class="member">Chatroom</li> -->
             <li v-for="(name, index) in friendsList.keys()" @click="changeTab(name)" class="member" :key="index">{{name}} {{friendsList.get(name)}}</li>
         </ul>
+        <button type="button" class="leave-button" @click="leaveChat()">退出</button>
     </div>
 
     <div class="chat-content">
@@ -182,7 +198,6 @@ const registerUser=()=>{
             <button type="button" class="send-button" @click="sendPrivateMessage()" v-else>发送</button>
         </div>
     </div>
-
 </div>
 
 </template>
@@ -272,6 +287,18 @@ ul {
   border-radius: 50px;
   margin-left: 5px;
   cursor: pointer;
+}
+.leave-button{
+    background-color: #008CBA; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 50px;
+    cursor: pointer;
 }
 .member{
   padding: 10px;
