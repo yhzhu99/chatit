@@ -272,18 +272,21 @@ const leaveChat=()=>{
                 <li v-for="(chat, index) in publicChats" class="message" :key="index">
                     <div class="avatar">{{chat.senderName}}</div>
                     <div class="message-data" v-if="chat.messageType=='text'">{{chat.message}}</div>
-                    <!-- <img :src="chat.message" v-if="chat.messageType=='image'" :alt="chat.messageName"/> -->
-                    <div class="demo-image__preview" v-if="chat.messageType=='image'">
-                        <el-image
-                        style="width: 50px; height: 50px"
-                        :initial-index="0"
-                        :src="chat.message"
-                        :preview-src-list="[chat.message]"
-                        :alt="chat.messageName"
-                        fit="cover"
-                        />
+                    <div class="message-data" v-if="chat.messageType=='image'">
+                        <div class="demo-image__preview">
+                            <el-image
+                            style="width: 50px; height: 50px"
+                            :initial-index="0"
+                            :src="chat.message"
+                            :preview-src-list="[chat.message]"
+                            :alt="chat.messageName"
+                            fit="cover"
+                            />
+                        </div>
                     </div>
-                    <el-button size="large" round @click="downloadFile(chat.message, chat.messageName)"  v-if="chat.messageType=='file'">下载 {{chat.messageName}}</el-button>
+                    <div class="message-data" v-if="chat.messageType=='file'">
+                        <el-button size="large" round @click="downloadFile(chat.message, chat.messageName)">下载 {{chat.messageName}}</el-button>
+                    </div>
                     <div class="message-data" v-if="chat.messageType=='video'">
                         <video alt="chat.messageName" width="150" height="150" controls>
                             <source :src="chat.message" type="video/mp4" />
