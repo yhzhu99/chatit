@@ -80,8 +80,8 @@ const onPublicMessageReceived = (payload)=>{
         case "MESSAGE":
             console.log(publicChats.value)
             publicChats.value.push(payloadData);
-            // 当别人群发消息时，表明他在线
-            friendsList.value.set(payloadData.senderName, "[在线]")
+            // 当别人群发消息时，表明他在线 (不需要做这个处理，因为上线时即通知了其在线)
+            // friendsList.value.set(payloadData.senderName, "[在线]")
             break;
         case "LEAVE":
             // 当别人下线时，更新他的离线状态
@@ -93,8 +93,8 @@ const onPublicMessageReceived = (payload)=>{
 
 const onPrivateMessageReceived = (payload)=>{
     // console.log(payload);
-    // 收到私发消息时，表明他在线
-    friendsList.value.set(payloadData.senderName, "[在线]")
+    // 收到私发消息时，表明他在线 (不需要做这个处理，因为上线时即通知了其在线)
+    // friendsList.value.set(payloadData.senderName, "[在线]")
     var payloadData = JSON.parse(payload.body);
     if(privateChats.get(payloadData.senderName)){
         privateChats.set(payloadData.senderName, [...privateChats.get(payloadData.senderName), payloadData]);
