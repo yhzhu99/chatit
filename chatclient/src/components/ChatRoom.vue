@@ -1,11 +1,16 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { useStorage } from '@vueuse/core'
 import { over } from 'stompjs';
 import  SockJS  from "sockjs-client/dist/sockjs"
 
 let stompClient = null;
 let privateChats = reactive(new Map())
-let publicChats = ref([])
+// const privateChats = useStorage('privateChats', new Map())
+// let publicChats = ref([])
+const publicChats = useStorage('publicChats', [])
+// const friendsList = useStorage('friendsList', new Map())
+
 let tab = ref("CHATROOM")
 let userData = ref({
     username: '',
@@ -13,7 +18,6 @@ let userData = ref({
     connected: false,
     message: ''
 })
-
 
 const onError = (err) => {
     console.log(err);    
