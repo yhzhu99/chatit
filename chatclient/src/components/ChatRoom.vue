@@ -48,7 +48,6 @@ const userJoin=()=>{
     for (const [key, value] of friendsList.value.entries()) {
         if ( friendsList.value.get(key) == '[在线]' ) {
             continue
-
         }
         else if (friendsList.value.get(key) == '[未知]' && key == userData.value.username) {
             friendsList.value.set(key, "[在线]")
@@ -77,6 +76,8 @@ const onPublicMessageReceived = (payload)=>{
         case "MESSAGE":
             console.log(publicChats.value)
             publicChats.value.push(payloadData);
+            // 当别人群发消息时，表明他在线
+            friendsList.value.set(payloadData.senderName, "[在线]")
             break;
         case "LEAVE":
             // 当别人下线时，更新他的离线状态
@@ -88,6 +89,8 @@ const onPublicMessageReceived = (payload)=>{
 
 const onPrivateMessageReceived = (payload)=>{
     // console.log(payload);
+    // 收到私发消息时，表明他在线
+    friendsList.value.set(payloadData.senderName, "[在线]")
     var payloadData = JSON.parse(payload.body);
     if(privateChats.get(payloadData.senderName)){
         privateChats.set(payloadData.senderName, [...privateChats.get(payloadData.senderName), payloadData]);
