@@ -141,6 +141,21 @@ const sendPublicMessage=()=>{
                 stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
             };
             reader.readAsDataURL(f);
+        } else {
+            console.log("🚀🚀🚀file!!!!")
+            const reader = new FileReader();
+            reader.onload = function(evt) { 
+                const contents = evt.target.result;
+                var chatMessage = {
+                    senderName: userData.value.username,
+                    message: contents,
+                    messageType: "file",
+                    messageName: f.name,
+                    status:"MESSAGE"
+                };
+                stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
+            };
+            reader.readAsDataURL(f);
         }
     }
 }
@@ -160,6 +175,15 @@ const sendPrivateMessage=()=>{
         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
         userData.value.message = "";
     }
+}
+
+const downloadFile = (content, name)=>{
+    const url = window.URL.createObjectURL(new Blob([JSON.stringify(content)]));
+    const fileLink = document.createElement('a');
+    fileLink.href = url;
+    fileLink.setAttribute('download', name); //or any other extension
+    document.body.appendChild(fileLink);
+    fileLink.click();
 }
 
 const changeTab=(v)=>{
@@ -231,6 +255,7 @@ const leaveChat=()=>{
                         fit="cover"
                         />
                     </div>
+                    <el-button size="large" round @click="downloadFile(chat.message, chat.messageName)"  v-if="chat.messageType=='file'">下载 {{chat.messageName}}</el-button>
                 </li>
         </ul>
         <ul class="chat-messages" v-else>
