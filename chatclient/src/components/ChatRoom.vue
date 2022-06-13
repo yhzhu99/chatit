@@ -338,9 +338,9 @@ const leaveChat=()=>{
 <div class="chat-box" v-if="userData.connected==true">
     <div class="member-list">
         <ul>
-            <li @click="changeTab('CHATROOM')" class="member">群聊</li>
+            <li @click="changeTab('CHATROOM')" class="member">群聊<div v-if="'CHATROOM'==tab">🍉</div></li>
             <!-- <li @click="tab.value='CHATROOM'" class="member">Chatroom</li> -->
-            <li v-for="(name, index) in friendsList.keys()" @click="changeTab(name)" class="member" :key="index">{{name}} {{friendsList.get(name)}}</li>
+            <li v-for="(name, index) in friendsList.keys()" @click="changeTab(name)" class="member" :key="index">{{name}} {{friendsList.get(name)}} <div v-if="name==tab">🍉</div> </li>
         </ul>
         <button type="button" class="leave-button" @click="leaveChat()">退出</button>
     </div>
