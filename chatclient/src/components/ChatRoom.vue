@@ -141,6 +141,20 @@ const sendPublicMessage=()=>{
                 stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
             };
             reader.readAsDataURL(f);
+        } else if (f.type=="video/mp4") {
+            const reader = new FileReader();
+            reader.onload = function(evt) { 
+                const contents = evt.target.result;
+                var chatMessage = {
+                    senderName: userData.value.username,
+                    message: contents,
+                    messageType: "video",
+                    messageName: f.name,
+                    status:"MESSAGE"
+                };
+                stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
+            };
+            reader.readAsDataURL(f);
         } else {
             console.log("🚀🚀🚀file!!!!")
             const reader = new FileReader();
@@ -256,6 +270,11 @@ const leaveChat=()=>{
                         />
                     </div>
                     <el-button size="large" round @click="downloadFile(chat.message, chat.messageName)"  v-if="chat.messageType=='file'">下载 {{chat.messageName}}</el-button>
+                    <div class="message-data" v-if="chat.messageType=='video'">
+                        <video alt="chat.messageName" width="150" height="150" controls>
+                            <source :src="chat.message" type="video/mp4" />
+                        </video>
+                    </div>
                 </li>
         </ul>
         <ul class="chat-messages" v-else>
