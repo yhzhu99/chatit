@@ -178,7 +178,7 @@ const leaveChat=()=>{
 <div class="chat-box" v-if="userData.connected==true">
     <div class="member-list">
         <ul>
-            <li @click="changeTab('CHATROOM')" class="member">Chatroom</li>
+            <li @click="changeTab('CHATROOM')" class="member">群聊</li>
             <!-- <li @click="tab.value='CHATROOM'" class="member">Chatroom</li> -->
             <li v-for="(name, index) in friendsList.keys()" @click="changeTab(name)" class="member" :key="index">{{name}} {{friendsList.get(name)}}</li>
         </ul>
