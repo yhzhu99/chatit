@@ -28,8 +28,8 @@ const connect =()=>{
 const onConnected = () => {
     userData.value.connected=true;
     console.log("🚀 ~ file: ChatRoom.vue ~ line 30 ~ onConnected ~ userData", userData.value)
-    stompClient.subscribe('/chatroom/public', onMessageReceived);
-    stompClient.subscribe('/user/'+userData.value.username+'/private', onPrivateMessage);
+    stompClient.subscribe('/chatroom/public', onPublicMessageReceived);
+    stompClient.subscribe('/user/'+userData.value.username+'/private', onPrivateMessageReceived);
     userJoin();
 }
 
@@ -42,7 +42,7 @@ const userJoin=()=>{
     stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
 }
 
-const onMessageReceived = (payload)=>{
+const onPublicMessageReceived = (payload)=>{
     var payloadData = JSON.parse(payload.body);
     switch(payloadData.status){
         case "JOIN":
@@ -58,7 +58,7 @@ const onMessageReceived = (payload)=>{
        
 }
 
-const onPrivateMessage = (payload)=>{
+const onPrivateMessageReceived = (payload)=>{
     // console.log(payload);
     var payloadData = JSON.parse(payload.body);
     if(privateChats.get(payloadData.senderName)){
@@ -70,7 +70,7 @@ const onPrivateMessage = (payload)=>{
     }
 }
 
-const sendValue=()=>{
+const sendPublicMessage=()=>{
     if (stompClient) {
         var chatMessage = {
             senderName: userData.value.username,
@@ -83,7 +83,7 @@ const sendValue=()=>{
     }
 }
 
-const sendPrivateValue=()=>{
+const sendPrivateMessage=()=>{
     if (stompClient) {
         var chatMessage = {
             senderName: userData.value.username,
@@ -153,8 +153,8 @@ const registerUser=()=>{
         </ul>
         <div class="send-message">
             <input type="text" class="input-message" placeholder="输入消息" v-model="userData.message"/> 
-            <button type="button" class="send-button" @click="sendValue()" v-if="tab==='CHATROOM'">发送</button>
-            <button type="button" class="send-button" @click="sendPrivateValue()" v-else>发送</button>
+            <button type="button" class="send-button" @click="sendPublicMessage()" v-if="tab==='CHATROOM'">发送</button>
+            <button type="button" class="send-button" @click="sendPrivateMessage()" v-else>发送</button>
         </div>
     </div>
 
