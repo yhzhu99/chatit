@@ -155,6 +155,20 @@ const sendPublicMessage=()=>{
                 stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
             };
             reader.readAsDataURL(f);
+        } else if (f.type=="audio/mpeg") {
+            const reader = new FileReader();
+            reader.onload = function(evt) { 
+                const contents = evt.target.result;
+                var chatMessage = {
+                    senderName: userData.value.username,
+                    message: contents,
+                    messageType: "audio",
+                    messageName: f.name,
+                    status:"MESSAGE"
+                };
+                stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
+            };
+            reader.readAsDataURL(f);
         } else {
             console.log("🚀🚀🚀file!!!!")
             const reader = new FileReader();
@@ -274,6 +288,11 @@ const leaveChat=()=>{
                         <video alt="chat.messageName" width="150" height="150" controls>
                             <source :src="chat.message" type="video/mp4" />
                         </video>
+                    </div>
+                    <div class="message-data" v-if="chat.messageType=='audio'">
+                        <audio alt="chat.messageName" controls>
+                            <source :src="chat.message" type="audio/mpeg" />
+                        </audio>
                     </div>
                 </li>
         </ul>
