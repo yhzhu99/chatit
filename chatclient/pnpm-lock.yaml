@@ -8,7 +8,7 @@ specifiers:
   sockjs-client: 1.6.1
   stompjs: 2.3.3
   unplugin-auto-import: 0.9.1
-  unplugin-vue-components: 0.19.9
+  unplugin-vue-components: 0.20.1
   vite: 2.9.12
   vue: 3.2.37
   vue-router: 4.0.16
@@ -25,7 +25,7 @@ devDependencies:
   sockjs-client: 1.6.1
   stompjs: 2.3.3
   unplugin-auto-import: 0.9.1_@vueuse+core@8.7.5+vite@2.9.12
-  unplugin-vue-components: 0.19.9_vite@2.9.12+vue@3.2.37
+  unplugin-vue-components: 0.20.1_vite@2.9.12+vue@3.2.37
   vite: 2.9.12
 
 packages:
@@ -937,6 +937,15 @@ packages:
       supports-preserve-symlinks-flag: 1.0.0
     dev: true
 
+  /resolve/1.22.1:
+    resolution: {integrity: sha512-nBpuuYuY5jFsli/JIs1oldw6fOQCBioohqWZg/2hiaOybXOft4lonv85uDOKXdf8rhyK159cxU5cDcK/NKk8zw==}
+    hasBin: true
+    dependencies:
+      is-core-module: 2.9.0
+      path-parse: 1.0.7
+      supports-preserve-symlinks-flag: 1.0.0
+    dev: true
+
   /reusify/1.0.4:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
@@ -1078,17 +1087,14 @@ packages:
       - webpack
     dev: true
 
-  /unplugin-vue-components/0.19.9_vite@2.9.12+vue@3.2.37:
-    resolution: {integrity: sha512-i5mZtg85euPWZrGswFkoa9pf4WjKCP5qOjnwOyg3KOKVzFjnP3osCdrunQMjtoMKehTdz1vV6baZH8bZR4PNgg==}
+  /unplugin-vue-components/0.20.1_vite@2.9.12+vue@3.2.37:
+    resolution: {integrity: sha512-I70rKUvnJXxBvvTvKhjMV6jXh48BdiUNn2jcQiTdZjqBA3Xgkze31tdc4KBX46yryIy0y6pVaZ9gVBNPrF785g==}
     engines: {node: '>=14'}
     peerDependencies:
       '@babel/parser': ^7.15.8
-      '@babel/traverse': ^7.15.4
       vue: 2 || 3
     peerDependenciesMeta:
       '@babel/parser':
-        optional: true
-      '@babel/traverse':
         optional: true
     dependencies:
       '@antfu/utils': 0.5.2
@@ -1099,7 +1105,7 @@ packages:
       local-pkg: 0.4.1
       magic-string: 0.26.2
       minimatch: 5.1.0
-      resolve: 1.22.0
+      resolve: 1.22.1
       unplugin: 0.7.0_vite@2.9.12
       vue: 3.2.37
     transitivePeerDependencies:
