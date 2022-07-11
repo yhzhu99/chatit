@@ -11,14 +11,14 @@ specifiers:
   unplugin-vue-components: 0.21.1
   vite: 2.9.13
   vue: 3.2.37
-  vue-router: 4.1.1
+  vue-router: 4.1.2
 
 dependencies:
   '@vueuse/core': 8.7.5_vue@3.2.37
   element-plus: 2.2.8_vue@3.2.37
   pinia: 2.0.14_vue@3.2.37
   vue: 3.2.37
-  vue-router: 4.1.1_vue@3.2.37
+  vue-router: 4.1.2_vue@3.2.37
 
 devDependencies:
   '@vitejs/plugin-vue': 2.3.3_vite@2.9.13+vue@3.2.37
@@ -1209,8 +1209,8 @@ packages:
     dependencies:
       vue: 3.2.37
 
-  /vue-router/4.1.1_vue@3.2.37:
-    resolution: {integrity: sha512-Wp1mEf2xCwT0ez7o9JvgpfBp9JGnVb+dPERzXDbugTatzJAJ60VWOhJKifQty85k+jOreoFHER4r5fu062PhPw==}
+  /vue-router/4.1.2_vue@3.2.37:
+    resolution: {integrity: sha512-5BP1qXFncVRwgV/XnqzsKApdMjQPqWIpoUBdL1ynz8HyLxIX/UDAx7Ql2BjmA5CXT/p61JfZvkpiFWFpaqcfag==}
     peerDependencies:
       vue: ^3.2.0
     dependencies:
